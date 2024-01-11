@@ -1,0 +1,35 @@
+import pandas as pd
+df= pd.read_excel('Executive_Investment3.xlsx')
+df
+
+import json
+def format_json_column(value):
+    try:
+        json_data = json.loads(value.replace("'", "\""))  # Assuming your JSON data has single quotes
+        formatted_data = json.dumps(json_data, indent=4).replace('\\', '')
+        return formatted_data.replace(',rn', ',\n        ')
+    except json.JSONDecodeError:
+        return value
+
+# Apply the function to Suite_Details and Tenant_Details columns
+df['Suite_Details'] = df['Suite_Details'].apply(format_json_column)
+df['Tenant_Details'] = df['Tenant_Details'].apply(format_json_column)
+
+formatted_data = df.apply(lambda row: {
+    key: str(row[key]) if isinstance(row[key], pd.Timestamp) else row[key]
+    for key in row.index if not pd.isna(row[key])
+}, axis=1)
+formatted_json = json.dumps(formatted_data.to_list(), indent=2)
+formatted_json = formatted_json.replace('\\n', '\n')
+formatted_json = formatted_json.replace('\\', '')
+print(formatted_json)
+
+formatted_json = formatted_json.replace('"[', '[').replace(']"', ']')
+print(formatted_json)
+
+output_txt_file = 'Executive.txt'
+with open(output_txt_file, 'w') as file:
+    for entry in formatted_json:
+        file.write(str(entry))
+
+print(f"Formatted data exported to {output_txt_file}")
