@@ -1,3 +1,4 @@
+#read data
 import pandas as pd
 df= pd.read_excel('Executive_Investment3.xlsx')
 df
