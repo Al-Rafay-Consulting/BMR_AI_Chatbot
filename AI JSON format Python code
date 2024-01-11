@@ -1,7 +1,9 @@
+#read data
 import pandas as pd
 df= pd.read_excel('Executive_Investment3.xlsx')
 df
 
+#transfer last two columns to json
 import json
 def format_json_column(value):
     try:
